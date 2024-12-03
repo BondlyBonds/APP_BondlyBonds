@@ -1,74 +1,53 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { auth } from "../../firebaseConfig";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function Index() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true); // To handle loading state
+  const [initialCheck, setInitialCheck] = useState(false); // To avoid conflicting with splash screen
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+  useEffect(() => {
+    // Perform initial check after splash screen interaction
+    if (!initialCheck) return;
+
+    // Check user authentication status
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // If user is logged in, navigate to feeds
+        router.replace("/(tabs)/feeds");
+      } else {
+        // If not logged in, navigate to login/signup
+        router.replace("/login");
+      }
+      setLoading(false); // Stop loading once redirection is handled
+    });
+
+    return unsubscribe; // Cleanup subscription on unmount
+  }, [initialCheck]);
+
+  useEffect(() => {
+    // Simulating splash screen completion by waiting for user interaction
+    setTimeout(() => setInitialCheck(true), 500); // Replace 500 with your dynamic splash trigger
+  }, []);
+
+  if (loading || !initialCheck) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00ffcc" />
+      </View>
+    );
+  }
+
+  return null; // This screen won't render anything as redirection happens
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#121212",
   },
 });
