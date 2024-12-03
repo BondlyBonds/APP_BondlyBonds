@@ -7,13 +7,13 @@ import { getAuth } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCE5oqYeVRVtn-MkHZbDZChZxy-JpEgpNs",
-  authDomain: "bondlybonds-24117.firebaseapp.com",
-  projectId: "bondlybonds-24117",
-  storageBucket: "bondlybonds-24117.firebasestorage.app",
-  messagingSenderId: "824510937130",
-  appId: "1:824510937130:web:ac6c4ab06146a176056b53",
-  measurementId: "G-1ZBM1ZKZJ8"
+  apiKey: "1",
+  authDomain: "2",
+  projectId: "3",
+  storageBucket: "4",
+  messagingSenderId: "5",
+  appId: "6",
+  measurementId: "7"
 };
 
 
